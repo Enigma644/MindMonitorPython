@@ -7,6 +7,7 @@ These code samples are to demonstrate streaming live OSC brainwave data from Min
 ![alt image](RelativeGraph.jpg)
 * Calculates and graphs the relative waves.
 * Plays a sound file if Alpha relative reaches a pre-set threshold.
+* Displays if the headband is correctly fitted in the console.
 
 ## [OSC Receiver Simple.py](OSC%20Receiver%20Simple.py)
 * Displays RAW EEG.
