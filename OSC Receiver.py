@@ -13,6 +13,8 @@ filePath = 'OSC-Python-Recording.csv'
 recording = False
 f = open (filePath,'w+')
 f.write('TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,AUX,Marker\n')
+# Muse S with 2 AUX Channels:
+# f.write('TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,AUX_L,AUX_R,Marker\n')
 
 def eeg_handler(address: str,*args):
     global recording
@@ -29,7 +31,9 @@ def marker_handler(address: str,i):
     dateTimeObj = datetime.now()
     timestampStr = dateTimeObj.strftime("%Y-%m-%d %H:%M:%S.%f")
     markerNum = address[-1]
-    f.write(timestampStr+",,,,/Marker/"+markerNum+"\n")
+    f.write(timestampStr+",,,,,,/Marker/"+markerNum+"\n")
+    # Muse S with 2 AUX Channels:
+    # f.write(timestampStr+",,,,,,,/Marker/"+markerNum+"\n")
     if (markerNum=="1"):        
         recording = True
         print("Recording Started.")
