@@ -14,7 +14,7 @@ recording = False
 f = open (filePath,'w+')
 f.write('TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,AUX,Marker\n')
 # Muse S with 2 AUX Channels:
-# f.write('TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,AUX_L,AUX_R,Marker\n')
+# f.write('TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,AUX_R,AUX_L,Marker\n')
 
 def eeg_handler(address: str,*args):
     global recording
