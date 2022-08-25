@@ -1,6 +1,6 @@
 """
 Mind Monitor - EEG OSC Receiver
-Coded: James Clutterbuck (2021)
+Coded: James Clutterbuck (2022)
 Requires: pip install python-osc
 """
 from datetime import datetime
@@ -10,35 +10,50 @@ from pythonosc import osc_server
 ip = "0.0.0.0"
 port = 5000
 filePath = 'OSC-Python-Recording.csv'
+auxCount = -1
 recording = False
+
 f = open (filePath,'w+')
-f.write('TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,AUX,Marker\n')
-# Muse S with 2 AUX Channels:
-# f.write('TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,AUX_R,AUX_L,Marker\n')
+
+def writeFileHeader():
+    global auxCount
+    fileString = 'TimeStamp,RAW_TP9,RAW_AF7,RAW_AF8,RAW_TP10,'
+    for x in range(0,auxCount):
+        fileString += 'AUX'+str(x+1)+','
+    fileString +='Marker\n'
+    f.write(fileString)
 
 def eeg_handler(address: str,*args):
     global recording
+    global auxCount
+    if auxCount==-1:
+        auxCount = len(args)-4
+        writeFileHeader()
     if recording:
-        dateTimeObj = datetime.now()
-        timestampStr = dateTimeObj.strftime("%Y-%m-%d %H:%M:%S.%f")
-        f.write(timestampStr)
+        timestampStr = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        fileString = timestampStr
         for arg in args:
-            f.write(","+str(arg))
-        f.write("\n")
+            fileString += ","+str(arg)            
+        fileString+="\n"
+        f.write(fileString)
     
 def marker_handler(address: str,i):
     global recording
-    dateTimeObj = datetime.now()
-    timestampStr = dateTimeObj.strftime("%Y-%m-%d %H:%M:%S.%f")
+    global auxCount
+    timestampStr = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
     markerNum = address[-1]
-    f.write(timestampStr+",,,,,,/Marker/"+markerNum+"\n")
-    # Muse S with 2 AUX Channels:
-    # f.write(timestampStr+",,,,,,,/Marker/"+markerNum+"\n")
+    if recording:
+        fileString = timestampStr+',,,,,'
+        for x in range (0,auxCount):
+            fileString +=','
+        fileString +='/Marker/'+markerNum+"\n"
+        f.write(fileString)
     if (markerNum=="1"):        
         recording = True
         print("Recording Started.")
     if (markerNum=="2"):
         f.close()
+        recording = False
         server.shutdown()
         print("Recording Stopped.")    
 
